@@ -12,6 +12,7 @@ import com.example.podcastapp.model.Podcast
 @Dao
 interface PodcastDao {
     @Query("SELECT * FROM Podcast ORDER BY feedTitle")
+
     fun loadPodcast(): LiveData<List<Podcast>>
 
     @Query("SELECT * FROM Episode WHERE podcastId = :podcastId ORDER BY releaseDate DESC")
