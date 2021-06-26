@@ -21,13 +21,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
-import com.example.podcastapp.R
-import com.example.podcastapp.Service.PodplayMediaCallback.Companion.CMD_CHANGESPEED
-import com.example.podcastapp.Service.PodplayMediaCallback.Companion.CMD_EXTRA_SPEED
-import com.example.podcastapp.Service.PodplayMediaService
-import com.example.podcastapp.util.HtmlUtils
-import com.example.podcastapp.util.SpeedUtil
-import com.example.podcastapp.viewmodel.PodcastViewModel
+import com.rahul.helpingvoice.R
+import com.rahul.helpingvoice.Service.PodplayMediaCallback.Companion.CMD_CHANGESPEED
+import com.rahul.helpingvoice.Service.PodplayMediaCallback.Companion.CMD_EXTRA_SPEED
+import com.rahul.helpingvoice.Service.PodplayMediaService
+import com.rahul.helpingvoice.util.HtmlUtils
+import com.rahul.helpingvoice.util.SpeedUtil
+import com.rahul.helpingvoice.viewmodel.PodcastViewModel
 import kotlinx.android.synthetic.main.fragment_episode_player.*
 
 class EpisodePlayerFragment : Fragment() {
