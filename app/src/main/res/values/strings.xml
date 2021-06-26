@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Helping Voice</string>
+    <string name="search_hint">Enter Podcast Search</string>
+    <string name="search">Search</string>
+    <string name="search_results">Search Results</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="ok_button">OK</string>
+    <string name="subscribed_podcasts">Subscribed Podcasts</string>
+    <string name="unsubscribe">Unsubscribe</string>
+    <string name="episode_notification_title">New episodes</string>
+    <string name="episode_notification_text">%1$d new episode(s) for %2$s</string>
+    <string name="pause">pause</string>
+    <string name="play">play</string>
 </resources>

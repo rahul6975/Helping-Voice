@@ -1,4 +1,4 @@
-package com.example.podcastapp.ui
+package com.rahul.helpingvoice.ui
 
 import android.content.ComponentName
 import android.content.Context
@@ -18,10 +18,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.podcastapp.R
-import com.example.podcastapp.Service.PodplayMediaService
-import com.example.podcastapp.adapter.EpisodeListAdapter
-import com.example.podcastapp.viewmodel.PodcastViewModel
+import com.rahul.helpingvoice.R
+import com.rahul.helpingvoice.adapter.EpisodeListAdapter
+import com.rahul.helpingvoice.viewmodel.PodcastViewModel
 import kotlinx.android.synthetic.main.fragment_podcast_details.*
 
 class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapterListener {
