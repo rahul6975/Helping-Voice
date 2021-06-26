@@ -4,7 +4,9 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,6 +31,7 @@ class PodcastListAdapter(
             v.findViewById(R.id.podcastNameTextView)
         val lastUpdatedTextView: TextView =
             v.findViewById(R.id.podcastLastUpdatedTextView)
+        val linearLayout: LinearLayout = v.findViewById(R.id.linearLayout)
         val podcastImageView: ImageView =
             v.findViewById(R.id.podcastImage)
 
@@ -65,8 +68,9 @@ class PodcastListAdapter(
         val searchViewList = podcastSummaryViewList ?: return
         val searchView = searchViewList[position]
         holder.podcastSummaryViewData = searchView
+        holder.linearLayout.animation =
+            AnimationUtils.loadAnimation(holder.itemView.context, R.anim.corner_anim)
         holder.nameTextView.text = searchView.name
-        //holder.lastUpdatedTextView.text = "last updated : " + DateUtils.JsonDateToShortDate(searchView.lastUpdated)
         holder.lastUpdatedTextView.text = searchView.lastUpdated.toString()
         Glide.with(parentActivity)
             .load(searchView.imageUrl)

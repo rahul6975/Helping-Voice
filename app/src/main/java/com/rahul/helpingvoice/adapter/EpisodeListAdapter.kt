@@ -3,7 +3,9 @@ package com.rahul.helpingvoice.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.rahul.helpingvoice.R
 import com.rahul.helpingvoice.util.DateUtils
@@ -26,6 +28,7 @@ class EpisodeListAdapter(
         var episodeViewData: PodcastViewModel.EpisodeViewData? = null
         val titleTextView: TextView = v.findViewById(R.id.titleView)
         val descTextView: TextView = v.findViewById(R.id.descView)
+        val contraintView: ConstraintLayout = v.findViewById(R.id.constraintView)
         val durationTextView: TextView = v.findViewById(R.id.durationView)
         val releaseDateTextView: TextView = v.findViewById(R.id.releaseDateView)
 
@@ -56,6 +59,8 @@ class EpisodeListAdapter(
         val episodeViewList = episodeViewList ?: return
         val episodeView = episodeViewList[position]
         holder.episodeViewData = episodeView
+        holder.contraintView.animation =
+            AnimationUtils.loadAnimation(holder.itemView.context, R.anim.creative_anim)
         holder.titleTextView.text = episodeView.title
         holder.descTextView.text = HtmlUtils.htmlToSpannable(episodeView.description ?: "")
         holder.durationTextView.text = episodeView.duration
