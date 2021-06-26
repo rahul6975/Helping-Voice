@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.example.podcastapp.model.Episode
 import com.example.podcastapp.model.Podcast
+import com.rahul.helpingvoice.model.Episode
 import com.rahul.helpingvoice.repository.PodcastRepo
 import com.rahul.helpingvoice.util.DateUtils
 import java.util.*

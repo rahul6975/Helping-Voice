@@ -1,10 +1,10 @@
 package com.rahul.helpingvoice.repository
 import androidx.lifecycle.LiveData
-import com.example.podcastapp.model.Episode
 import com.example.podcastapp.model.Podcast
 import com.rahul.helpingvoice.Service.FeedService
 import com.rahul.helpingvoice.Service.RSSFeedResponse
 import com.rahul.helpingvoice.db.PodcastDao
+import com.rahul.helpingvoice.model.Episode
 import com.rahul.helpingvoice.util.DateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
