@@ -2,8 +2,8 @@ package com.rahul.helpingvoice.db
 
 import android.content.Context
 import androidx.room.*
-import com.example.podcastapp.model.Episode
 import com.example.podcastapp.model.Podcast
+import com.rahul.helpingvoice.model.Episode
 import java.util.*
 
 class Converters {

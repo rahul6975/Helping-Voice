@@ -1,4 +1,5 @@
 package com.rahul.helpingvoice.Service
+
 import com.rahul.helpingvoice.util.DateUtils
 import okhttp3.*
 import org.w3c.dom.Node
@@ -14,7 +15,9 @@ class RSSFeedService : FeedService {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 callback(null)
-            }            @Throws(IOException::class)
+            }
+
+            @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     response.body?.let { responseBody ->
@@ -30,12 +33,16 @@ class RSSFeedService : FeedService {
                     }
                 }
                 callback(null)
-            }        })
-    }    private fun domToRssFeedResponse(node: Node, rssFeedResponse: RSSFeedResponse) {
+            }
+        })
+    }
+
+    private fun domToRssFeedResponse(node: Node, rssFeedResponse: RSSFeedResponse) {
         if (node.nodeType == Node.ELEMENT_NODE) {
             val nodeName = node.nodeName
             val parentName = node.parentNode.nodeName
-            val grandParentName = node.parentNode.parentNode?.nodeName            if (parentName == "item" && grandParentName == "channel") {
+            val grandParentName = node.parentNode.parentNode?.nodeName
+            if (parentName == "item" && grandParentName == "channel") {
                 val currentItem = rssFeedResponse.episodes?.last()
                 if (currentItem != null) {
                     when (nodeName) {
@@ -53,7 +60,8 @@ class RSSFeedService : FeedService {
                         }
                     }
                 }
-            }            if (parentName == "channel") {
+            }
+            if (parentName == "channel") {
                 when (nodeName) {
                     "title" -> rssFeedResponse.title = node.textContent
                     "description" -> rssFeedResponse.description = node.textContent
@@ -69,9 +77,15 @@ class RSSFeedService : FeedService {
             val childNode = nodeList.item(i)
             domToRssFeedResponse(childNode, rssFeedResponse)
         }
-    }}interface FeedService {
-    fun getFeed(xmlFileURL: String, callback: (RSSFeedResponse?) -> Unit)    companion object {
+    }
+}
+
+interface FeedService {
+    fun getFeed(xmlFileURL: String, callback: (RSSFeedResponse?) -> Unit)
+
+    companion object {
         val instance: FeedService by lazy {
             RSSFeedService()
         }
-    }}
+    }
+}
