@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=
+        "com.example.podcastapp.ui.PodcastActivity">
+    <item android:id="@+id/search_item"
+        android:title="@string/search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction=
+            "collapseActionView|ifRoom"
+    app:actionViewClass="android.widget.SearchView"/>
+</menu>
