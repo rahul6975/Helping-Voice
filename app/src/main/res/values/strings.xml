@@ -11,4 +11,7 @@
     <string name="episode_notification_text">%1$d new episode(s) for %2$s</string>
     <string name="pause">pause</string>
     <string name="play">play</string>
+
+    <string name="start">Call</string>
+    <string name="stop">End</string>
 </resources>

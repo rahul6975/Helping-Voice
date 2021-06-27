@@ -11,6 +11,7 @@ import android.os.ResultReceiver
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+
 class PodplayMediaCallback(
     val context: Context,
     val mediaSession: MediaSessionCompat,

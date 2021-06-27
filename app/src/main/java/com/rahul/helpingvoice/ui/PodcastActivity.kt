@@ -4,15 +4,15 @@ import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
+import android.widget.ImageView
+import android.widget.SearchView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -40,6 +40,10 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
     private lateinit var podcastListAdapter: PodcastListAdapter
     private lateinit var searchMenuItem: MenuItem
     private lateinit var podcastViewModel: PodcastViewModel
+
+    private val iv_mic: ImageView? = null
+    private val tv_Speech_to_text: TextView? = null
+    private val REQUEST_CODE_SPEECH_INPUT = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +93,7 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
             val query = intent.getStringExtra(SearchManager.QUERY)
             performSearch(query.toString())
         }
+
         val podcastFeedUrl = intent.getStringExtra(EpisodeUpdateService.EXTRA_FEED_URL)
         if (podcastFeedUrl != null) {
             podcastViewModel.setActivePodcast(podcastFeedUrl) {
@@ -272,6 +277,8 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         }
         return episodePlayerFragment
     }
+
+
 
     private fun showPlayerFragment() {
         val episodePlayerFragment = createEpisodePlayerFragment()
