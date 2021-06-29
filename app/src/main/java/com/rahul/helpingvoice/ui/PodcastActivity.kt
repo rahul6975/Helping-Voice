@@ -1,13 +1,14 @@
 package  com.rahul.helpingvoice.ui
 
-import android.annotation.TargetApi
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.PackageManager
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -18,8 +19,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -38,20 +41,20 @@ import com.rahul.helpingvoice.repository.PodcastRepo
 import com.rahul.helpingvoice.viewmodel.PodcastViewModel
 import com.rahul.helpingvoice.viewmodel.SearchViewModel
 import kotlinx.android.synthetic.main.activity_podcast.*
-import org.w3c.dom.Text
 import java.util.*
 
 
 class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapterListener,
     PodcastDetailsFragment.onPodcastDetailsListener, TextToSpeech.OnInitListener {
 
+    private lateinit var mediaPlayer: MediaPlayer
     val TAG = javaClass.simpleName
     private lateinit var searchViewModel: SearchViewModel
     private lateinit var podcastListAdapter: PodcastListAdapter
     private lateinit var searchMenuItem: MenuItem
     private lateinit var podcastViewModel: PodcastViewModel
     private val RQ_SPEECH = 102
-
+    private val whomeToCall = 206
     private val searchRequestCode = 103
     private val getIndexRequest = 104
 
@@ -69,6 +72,28 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         scheduleJobs()
         PreferenceHelper.getSharedPreferences(this)
         textToSpeech = TextToSpeech(this, this)
+        mediaPlayer = MediaPlayer.create(this, R.raw.kalank)
+
+        toolbar.setOnClickListener {
+            val text =
+                "how can i help you ?"
+            val hashMap = HashMap<String, String>()
+            hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "good")
+            textToSpeech!!.speak(text, TextToSpeech.QUEUE_FLUSH, hashMap)
+            textToSpeech!!.setOnUtteranceProgressListener(object :
+                UtteranceProgressListener() {
+                override fun onStart(utteranceId: String?) {
+                }
+
+                override fun onDone(utteranceId: String?) {
+                    getAnswer()
+                }
+
+                override fun onError(utteranceId: String?) {
+                }
+
+            })
+        }
 
     }
 
@@ -129,6 +154,19 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
                 if (element == "search") {
                     askWhichSearch()
                     break
+                } else if (element == "walk") {
+                    letsWalk()
+                    break
+
+                } else if (element == "emergency") {
+                    askWhichNumber()
+                    break
+                } else if (element == "music") {
+                    playingMusic()
+                    break
+                } else if (element == "stop") {
+                    stopMusic()
+                    break
                 }
             }
         } else if (requestCode == searchRequestCode && resultCode == Activity.RESULT_OK) {
@@ -157,7 +195,127 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
 
                 })
             }
+        } else if (requestCode == whomeToCall && resultCode == Activity.RESULT_OK) {
+            val result = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val answer = result?.get(0).toString()
+            if (answer == "Praveen") {
+                callDad()
+            }
         }
+    }
+
+    fun playingMusic() {
+        val text =
+            "Okay, playing your favorite music"
+        val hashMap = HashMap<String, String>()
+        hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "good")
+        textToSpeech!!.speak(text, TextToSpeech.QUEUE_FLUSH, hashMap)
+        textToSpeech!!.setOnUtteranceProgressListener(object :
+            UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+            }
+
+            override fun onDone(utteranceId: String?) {
+                if (!mediaPlayer.isPlaying) {
+                    mediaPlayer.start()
+                }
+            }
+
+            override fun onError(utteranceId: String?) {
+            }
+
+        })
+
+
+    }
+
+    fun stopMusic() {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
+    }
+
+    fun askWhichNumber() {
+        val whichSearch = "Whom should i call ?"
+        val hashMap = HashMap<String, String>()
+        hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "good")
+        textToSpeech!!.speak(whichSearch, TextToSpeech.QUEUE_FLUSH, hashMap)
+        textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+            }
+
+            override fun onDone(utteranceId: String?) {
+                if (!SpeechRecognizer.isRecognitionAvailable(applicationContext)) {
+                } else {
+                    val i = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                    i.putExtra(
+                        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                    )
+                    i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                    i.putExtra(RecognizerIntent.EXTRA_PROMPT, "say something")
+                    startActivityForResult(i, whomeToCall)
+                }
+            }
+
+            override fun onError(utteranceId: String?) {
+            }
+
+        })
+    }
+
+    fun callDad() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CALL_PHONE
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CALL_PHONE),
+                42
+            )
+        } else {
+            val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "7757886309"))
+            startActivity(intent)
+        }
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 42) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "7757886309"))
+                startActivity(intent)
+            } else {
+            }
+            return
+        }
+    }
+
+    fun letsWalk() {
+        val whichSearch = "Okay lets go for a walk"
+        val hashMap = HashMap<String, String>()
+        hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "good")
+        textToSpeech!!.speak(whichSearch, TextToSpeech.QUEUE_FLUSH, hashMap)
+        textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+            }
+
+            override fun onDone(utteranceId: String?) {
+                startActivity(Intent(applicationContext, ObjectDetection::class.java))
+            }
+
+            override fun onError(utteranceId: String?) {
+            }
+
+        })
     }
 
     fun askWhichSearch() {
@@ -251,6 +409,7 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         handleIntent(intent)
     }
 
+
     private fun handleIntent(intent: Intent) {
         if (intent.action == Intent.ACTION_SEARCH) {
             val query = intent.getStringExtra(SearchManager.QUERY)
@@ -274,7 +433,8 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         searchViewModel.searchPodcast(term) { results ->
             Log.d(TAG, "RESULTS : $results")
             hideProgressBar()
-            toolbar.title = getString(R.string.search_results)
+            imgView.visibility = View.GONE
+            toolbar.title = "Hello Rahul"
             podcastListAdapter.setSearchData(results)
             askWhichToOpen(results)
         }
@@ -424,6 +584,7 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
 
         podcastListAdapter = PodcastListAdapter(null, this, this)
         PodcastRecyclerView.adapter = podcastListAdapter
+        toolbar.title = "Hello Rahul"
     }
 
     private fun showProgressBar() {
@@ -454,6 +615,20 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         private val TAG_EPISODE_UPDATE_JOB = "com.podcastapp.episodes"
     }
 
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentByTag(TAG_DETAILS_FRAGMENT)
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+//        val fragment2 = supportFragmentManager.findFragmentByTag(TAG_PLAYER_FRAGMENT)
+        if (fragment == null) {
+            startActivity(Intent(this, PodcastActivity::class.java))
+            finish()
+//        } else if (fragment2 != null) {
+//            fragmentTransaction.remove(fragment2).commit()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     private fun createPodcastDetailsFragment(): PodcastDetailsFragment {
         var podcastDetailsFragment =
             supportFragmentManager.findFragmentByTag(TAG_DETAILS_FRAGMENT) as PodcastDetailsFragment?
@@ -468,8 +643,8 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
     private fun showDetailsFragment() {
         val podcastDetailsFragment = createPodcastDetailsFragment()
         supportFragmentManager.beginTransaction()
-            .add(R.id.podcastDetailsContainer, podcastDetailsFragment, TAG_DETAILS_FRAGMENT)
-            .addToBackStack("DetailsFragment").commit()
+            .replace(R.id.podcastDetailsContainer, podcastDetailsFragment, TAG_DETAILS_FRAGMENT)
+            .commit()
         PodcastRecyclerView.visibility = View.INVISIBLE
         searchMenuItem.isVisible = false
     }
@@ -498,7 +673,7 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
     private fun showSubscribedPodcasts() {
         val podcasts = podcastViewModel.getPodcasts()?.value
         if (podcasts != null) {
-            toolbar.title = getString(R.string.subscribed_podcasts)
+            toolbar.title = "Hello Rahul"
             podcastListAdapter.setSearchData(podcasts)
         }
     }
@@ -561,7 +736,7 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
             R.id.podcastDetailsContainer,
             episodePlayerFragment,
             TAG_PLAYER_FRAGMENT
-        ).addToBackStack("PlayerFragment").commit()
+        ).commit()
         PodcastRecyclerView.visibility = View.INVISIBLE
         searchMenuItem.isVisible = false
     }
@@ -571,5 +746,4 @@ class PodcastActivity : AppCompatActivity(), PodcastListAdapter.PodcastListAdapt
         textToSpeech!!.stop()
         textToSpeech!!.shutdown()
     }
-
 }

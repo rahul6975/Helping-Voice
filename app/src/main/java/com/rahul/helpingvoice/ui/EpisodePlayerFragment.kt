@@ -1,10 +1,16 @@
 package com.rahul.helpinghand.ui
 
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.ComponentName
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -29,8 +35,9 @@ import com.rahul.helpingvoice.util.HtmlUtils
 import com.rahul.helpingvoice.util.SpeedUtil
 import com.rahul.helpingvoice.viewmodel.PodcastViewModel
 import kotlinx.android.synthetic.main.fragment_episode_player.*
+import java.util.*
 
-class EpisodePlayerFragment : Fragment() {
+class EpisodePlayerFragment : Fragment(), TextToSpeech.OnInitListener {
 
     private lateinit var podcastViewModel: PodcastViewModel
     private lateinit var mediaBrowser: MediaBrowserCompat
@@ -38,8 +45,11 @@ class EpisodePlayerFragment : Fragment() {
     private lateinit var playToggleButton: Button
     private lateinit var speedButton: Button
     private var playerSpeed: Float = 1.0f
+    private var textToSpeech: TextToSpeech? = null
     private lateinit var forwardButton: ImageButton
     private lateinit var replayButton: ImageButton
+    private var moveHomePage = 206
+
     private var episodeDuration: Long = 0
     private lateinit var endTimeTextView: TextView
     private lateinit var currentTimeTextView: TextView
@@ -69,6 +79,34 @@ class EpisodePlayerFragment : Fragment() {
         }
     }
 
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val result = textToSpeech!!.setLanguage(Locale.getDefault())
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            } else {
+                speck()
+            }
+        }
+    }
+
+    private fun speck() {
+        val text =
+            "Rahul, we are in the second episode and now playing"
+        val hashMap = HashMap<String, String>()
+        hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "good")
+        textToSpeech!!.speak(text, TextToSpeech.QUEUE_FLUSH, hashMap)
+        textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+            }
+
+            override fun onDone(utteranceId: String?) {
+            }
+
+            override fun onError(utteranceId: String?) {
+            }
+
+        })
+    }
 
     private fun updateControlsFromMetadata(metadata: MediaMetadataCompat) {
         episodeDuration = metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION)
@@ -144,13 +182,63 @@ class EpisodePlayerFragment : Fragment() {
         }
     }
 
+    private fun sayMove() {
+        if (!SpeechRecognizer.isRecognitionAvailable(requireContext())) {
+        } else {
+            val i = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            i.putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+            i.putExtra(RecognizerIntent.EXTRA_PROMPT, "say something")
+            startActivityForResult(i, moveHomePage)
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == moveHomePage && resultCode == Activity.RESULT_OK) {
+            val result = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val answer = result?.get(0).toString()
+            val listOfAns = answer.split(" ")
+            for (element in listOfAns) {
+                if (element == "home") {
+                    activity?.onBackPressed()
+                    break
+                }
+            }
+        }
+    }
+
     private fun setupControls() {
         playToggleButton.setOnClickListener {
             togglePlayPause()
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             speedButton.setOnClickListener {
-                changeSpeed()
+
+                val text =
+                    "how can i help you ?"
+                val hashMap = HashMap<String, String>()
+                hashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "good")
+                textToSpeech!!.speak(text, TextToSpeech.QUEUE_FLUSH, hashMap)
+                textToSpeech!!.setOnUtteranceProgressListener(object :
+                    UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                    }
+
+                    override fun onDone(utteranceId: String?) {
+                        sayMove()
+                    }
+
+                    override fun onError(utteranceId: String?) {
+                    }
+
+                })
+
+//                changeSpeed()
             }
         } else {
             speedButton.visibility = View.INVISIBLE
@@ -216,7 +304,8 @@ class EpisodePlayerFragment : Fragment() {
 
     private fun setupViewModel() {
         val fragmentActivity = activity as FragmentActivity
-        podcastViewModel = ViewModelProviders.of(fragmentActivity).get(PodcastViewModel::class.java)
+        podcastViewModel =
+            ViewModelProviders.of(fragmentActivity).get(PodcastViewModel::class.java)
     }
 
     private fun updateControls() {
@@ -263,6 +352,7 @@ class EpisodePlayerFragment : Fragment() {
         endTimeTextView = view.findViewById(R.id.endTimeTextView)
         currentTimeTextView = view.findViewById(R.id.currentTimeTextView)
         seekBar = view.findViewById(R.id.seekBar)
+        textToSpeech = TextToSpeech(requireContext(), this)
         setupControls()
     }
 
@@ -346,5 +436,6 @@ class EpisodePlayerFragment : Fragment() {
         val newPosition = controller.playbackState.position + seconds * 1000
         controller.transportControls.seekTo(newPosition)
     }
+
 
 }

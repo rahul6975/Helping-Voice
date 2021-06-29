@@ -11,4 +11,8 @@
     <string name="episode_notification_text">%1$d new episode(s) for %2$s</string>
     <string name="pause">pause</string>
     <string name="play">play</string>
+    <string name="tv_take_photo">Take photo</string>
+    <string name="tv_description">Select a preset image or take a new photo</string>
+    <string name="tv_placeholder">Object detection demo</string>
+
 </resources>
