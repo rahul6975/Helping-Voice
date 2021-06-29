@@ -3,23 +3,27 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
+    android:background="@drawable/edit_bg"
     android:orientation="horizontal"
     android:paddingHorizontal="5dp"
     android:paddingVertical="10dp">
 
     <ImageView
         android:id="@+id/podcastImage"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="5dp"
         android:adjustViewBounds="true"
-        android:scaleType="fitStart" />
+        android:scaleType="fitStart"
+        android:textColor="@color/black" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:textColor="@color/black">
 
         <TextView
             android:id="@+id/podcastNameTextView"
@@ -28,6 +32,7 @@
             android:layout_marginBottom="5dp"
             android:gravity="top"
             android:text="Name"
+            android:textColor="@color/black"
             android:textStyle="bold" />
 
         <TextView
@@ -36,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:text="Last updated"
+            android:textColor="@color/black"
             android:textSize="12sp" />
 
     </LinearLayout>

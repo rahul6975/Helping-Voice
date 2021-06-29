@@ -64,7 +64,8 @@ class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapter
             val result = textToSpeech!!.setLanguage(Locale.getDefault())
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
             } else {
-//                speck()
+                val viewData = podcastViewModel.activePodcastViewData ?: return
+                speck(viewData)
             }
         }
     }
@@ -171,7 +172,7 @@ class PodcastDetailsFragment : Fragment(), EpisodeListAdapter.EpisodeListAdapter
             Glide.with(activity).load(viewData.imageUrl)
                 .into(feedImageView)
         }
-        speck(viewData)
+//        speck(viewData)
     }
 
 
