@@ -1,4 +1,4 @@
-package com.example.podcastapp.model
+package com.rahul.helpingvoice.model
 
 import androidx.room.Entity
 import androidx.room.Ignore

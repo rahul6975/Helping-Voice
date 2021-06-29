@@ -6,8 +6,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import com.example.podcastapp.model.Podcast
 import com.rahul.helpingvoice.model.Episode
+import com.rahul.helpingvoice.model.Podcast
 
 
 @Dao
